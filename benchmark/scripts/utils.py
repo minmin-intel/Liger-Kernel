@@ -186,7 +186,8 @@ def update_benchmark_data_csv(
     fieldnames = BenchmarkDataCSVRow.__annotations__.keys()
 
     # Make filename path relative to current file
-    filename_abs_path = os.path.join(get_current_file_directory(), "../data", filename)
+    # filename_abs_path = os.path.join(get_current_file_directory(), "../data", filename)
+    filename_abs_path = filename
     file_exists = os.path.isfile(filename_abs_path)
 
     # Read existing data into a list of dicts
@@ -269,6 +270,7 @@ def run_benchmarks(
     kernel_operation_modes: Optional[List[str]] = [None],
     extra_benchmark_configs: Optional[List[Dict[str, Any]]] = None,
     overwrite: bool = False,
+    output_file: Optional[str] = None
 ):
     """
     Run benchmarks given a bench_test_fn that takes in a SingleBenchmarkRunInput as input and
@@ -287,6 +289,7 @@ def run_benchmarks(
         - kernel_operation_modes: The list of kernel operation modes to run the benchmark on (e.g. ["full", "backward"])
         - extra_benchmark_configs: The list of extra benchmark configurations to run the benchmark on.
         - overwrite: Whether to overwrite the existing benchmark data entry if it already exists.
+        - output_file: The path to the output CSV file.
     """
 
     assert len(kernel_operation_modes) >= 1
@@ -337,7 +340,7 @@ def run_benchmarks(
 
     print_benchmark_data(benchmark_data_list)
 
-    update_benchmark_data_csv(benchmark_data_list=benchmark_data_list, overwrite=overwrite)
+    update_benchmark_data_csv(benchmark_data_list=benchmark_data_list, overwrite=overwrite, filename=output_file)
 
 
 def parse_benchmark_script_args():
@@ -348,6 +351,12 @@ def parse_benchmark_script_args():
         "--overwrite",
         action="store_true",
         help="Flag to overwrite existing benchmark data with current run.",
+    )
+    parser.add_argument(
+        "--output_file",
+        type=str,
+        default="benchmark_results.csv",
+        help="absolute Path to the output CSV file.",
     )
 
     args = parser.parse_args()

@@ -165,7 +165,7 @@ if __name__ == "__main__":
         "x_name": "H",
         "x_label": "hidden size",
         "x_values": [32 * (2**i) for i in range(4, 10, 2)],
-        "kernel_providers": ["liger", "huggingface"],
+        "kernel_providers": ["liger"],
         "extra_benchmark_configs": [
             {
                 "dtype": torch.bfloat16,
@@ -175,10 +175,11 @@ if __name__ == "__main__":
             }
         ],
         "overwrite": args.overwrite,
+        "output_file": args.output_file,
     }
     run_benchmarks(
         bench_test_fn=bench_speed_rope,
-        kernel_operation_modes=["forward", "backward", "full"],
+        kernel_operation_modes=["forward", "backward"],
         metric_name="speed",
         metric_unit="ms",
         **common_configs_varying_hidden_size,
@@ -196,7 +197,7 @@ if __name__ == "__main__":
         "x_name": "T",
         "x_label": "sequence length",
         "x_values": [2**i for i in range(10, 15)],
-        "kernel_providers": ["liger", "huggingface"],
+        "kernel_providers": ["liger"],
         "extra_benchmark_configs": [
             {
                 "dtype": torch.bfloat16,
@@ -206,10 +207,11 @@ if __name__ == "__main__":
             }
         ],
         "overwrite": args.overwrite,
+        "output_file": args.output_file,
     }
     run_benchmarks(
         bench_test_fn=bench_speed_rope,
-        kernel_operation_modes=["forward", "backward", "full"],
+        kernel_operation_modes=["forward", "backward"],
         metric_name="speed",
         metric_unit="ms",
         **common_configs_varying_seq_len,
