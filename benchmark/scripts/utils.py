@@ -18,11 +18,24 @@ from typing import Union
 
 import torch
 
-from liger_kernel.utils import infer_device
+# from liger_kernel.utils import infer_device
 
-device = infer_device()
+# device = infer_device()
 
-LIGER_KERNEL_VERSION = version("liger-kernel")
+def infer_device():
+    """
+    Get current device name based on available devices
+    """
+    if torch.cuda.is_available():  # Works for both Nvidia and AMD
+        return "cuda"
+    elif torch.xpu.is_available():
+        return "xpu"
+    else:
+        return "cpu"
+
+device=infer_device()
+
+LIGER_KERNEL_VERSION = "agent-generated"
 
 QUANTILES = [0.5, 0.2, 0.8]
 

@@ -1,10 +1,15 @@
 import pytest
 import torch
+import sys
+import os
 
-from test.utils import supports_bfloat16
 from transformers.models.llama.configuration_llama import LlamaConfig
 from transformers.models.llama.modeling_llama import LlamaRotaryEmbedding
 from transformers.models.llama.modeling_llama import apply_rotary_pos_emb
+
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.append(os.path.join(project_root, 'src'))
+print(sys.path)
 
 from liger_kernel.ops.rope import LigerRopeFunction
 from liger_kernel.transformers.functional import liger_rope
@@ -16,6 +21,13 @@ device = infer_device()
 
 SLEEP_SECONDS = 0.1
 
+def supports_bfloat16():
+    if device == "cuda":
+        return torch.cuda.get_device_capability() >= (8, 0)  # Ampere and newer
+    elif device == "xpu":
+        return True
+    else:
+        return False
 
 @pytest.mark.parametrize(
     "bsz, seq_len, num_q_heads, num_kv_heads, head_dim",

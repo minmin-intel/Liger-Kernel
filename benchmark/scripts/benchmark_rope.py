@@ -11,6 +11,11 @@ from utils import _test_memory
 from utils import parse_benchmark_script_args
 from utils import run_benchmarks
 
+import sys
+import os
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.append(os.path.join(project_root, 'src'))
+print(sys.path)
 from liger_kernel.transformers.rope import liger_rotary_pos_emb
 from liger_kernel.utils import infer_device
 from liger_kernel.utils import transformers_version_dispatch
