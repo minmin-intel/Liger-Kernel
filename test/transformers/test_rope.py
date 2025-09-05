@@ -193,3 +193,62 @@ def test_functional_correctness(
 
     assert torch.allclose(q1_grad, q2_grad, atol=atol, rtol=rtol)
     assert torch.allclose(k1_grad, k2_grad, atol=atol, rtol=rtol)
+
+
+
+def test_call(
+    bsz,
+    seq_len,
+    num_q_heads,
+    num_kv_heads,
+    head_dim,
+    expand_position_ids,
+    dtype,
+):
+    _q = torch.randn((bsz, num_q_heads, seq_len, head_dim), device=device, dtype=dtype)
+    _k = torch.randn((bsz, num_kv_heads, seq_len, head_dim), device=device, dtype=dtype)
+
+    q1 = _q.clone().requires_grad_(True)
+    q2 = _q.clone().requires_grad_(True)
+
+    k1 = _k.clone().requires_grad_(True)
+    k2 = _k.clone().requires_grad_(True)
+
+    rotary_emb = transformers_version_dispatch(
+        "4.48.0",
+        LlamaRotaryEmbedding,
+        LlamaRotaryEmbedding,
+        before_kwargs={"dim": head_dim, "device": device},
+        after_kwargs={"config": LlamaConfig(num_kv_heads=num_kv_heads, head_dim=head_dim), "device": device},
+    )
+
+    pos_ids = torch.arange(seq_len, device=device, dtype=torch.long).unsqueeze(0)
+    if expand_position_ids:
+        pos_ids = pos_ids.expand(bsz, -1)
+        
+    cos, sin = rotary_emb(k1, pos_ids)
+
+    # test forward call
+    class_q, class_k = LigerRopeFunction.apply(q2, k2, cos, sin)
+
+    # test backward call
+    dq, dk = torch.randn_like(class_q), torch.randn_like(class_k)
+
+    dq2, dk2 = dq.clone(), dk.clone()
+
+    q2_grad, k2_grad = torch.autograd.grad(
+        (class_q, class_k),
+        (q2, k2),
+        (dq2, dk2),
+        allow_unused=True,
+    )
+
+
+if __name__ == "__main__":
+    bsz = 1
+    seq_len = 2048
+    num_q_heads = 32
+    num_kv_heads = 8
+    head_dim = 4096
+    test_call(bsz, seq_len, num_q_heads, num_kv_heads, head_dim, True, torch.bfloat16)
+    test_call(bsz, seq_len, num_q_heads, num_kv_heads, head_dim, False, torch.bfloat16)
