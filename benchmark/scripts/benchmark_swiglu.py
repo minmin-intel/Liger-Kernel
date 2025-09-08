@@ -10,6 +10,11 @@ from utils import _test_memory
 from utils import parse_benchmark_script_args
 from utils import run_benchmarks
 
+import sys
+import os
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.append(os.path.join(project_root, 'src'))
+# print(sys.path)
 from liger_kernel.transformers.swiglu import LigerSwiGLUMLP
 from liger_kernel.utils import infer_device
 
