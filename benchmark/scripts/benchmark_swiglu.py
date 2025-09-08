@@ -151,7 +151,7 @@ if __name__ == "__main__":
         "x_name": "T",
         "x_label": "sequence length",
         "x_values": [2**i for i in range(10, 14)],
-        "kernel_providers": ["liger", "huggingface"],
+        "kernel_providers": ["liger"],
         "extra_benchmark_configs": [
             {
                 "B": 4,
@@ -162,11 +162,12 @@ if __name__ == "__main__":
             }
         ],
         "overwrite": args.overwrite,
+        "output_file": args.output_file,
     }
 
     run_benchmarks(
         bench_test_fn=bench_speed_swiglu,
-        kernel_operation_modes=["forward", "full", "backward"],
+        kernel_operation_modes=["forward", "backward"],
         metric_name="speed",
         metric_unit="ms",
         **common_configs,
