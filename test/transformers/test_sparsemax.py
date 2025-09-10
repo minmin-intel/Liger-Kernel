@@ -1,8 +1,13 @@
 import pytest
 import torch
+import os
+import sys
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.append(os.path.join(project_root, 'test'))
+sys.path.append(os.path.join(project_root, 'src'))
 
-from test.utils import assert_verbose_allclose
-from test.utils import set_seed
+from utils import assert_verbose_allclose
+from utils import set_seed
 
 from liger_kernel.transformers.functional import liger_sparsemax
 from liger_kernel.transformers.sparsemax import LigerSparsemax
