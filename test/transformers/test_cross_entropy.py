@@ -1,11 +1,12 @@
-import pytest
-import torch
-import torch.nn.functional as F
+import os
+import sys
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.append(os.path.join(project_root, 'src'))
+sys.path.append(os.path.join(project_root, 'test'))
 
-from test.utils import assert_verbose_allclose
-from test.utils import set_seed
-from test.utils import supports_bfloat16
-from torch.nn import CrossEntropyLoss
+from utils import assert_verbose_allclose
+from utils import set_seed
+from utils import supports_bfloat16
 
 from liger_kernel.ops.cross_entropy import LigerCrossEntropyFunction
 from liger_kernel.ops.cross_entropy import liger_cross_entropy_kernel
@@ -13,6 +14,11 @@ from liger_kernel.ops.utils import is_hip
 from liger_kernel.transformers.cross_entropy import LigerCrossEntropyLoss
 from liger_kernel.transformers.functional import liger_cross_entropy
 from liger_kernel.utils import infer_device
+
+import pytest
+import torch
+import torch.nn.functional as F
+from torch.nn import CrossEntropyLoss
 
 device = infer_device()
 set_seed(42)

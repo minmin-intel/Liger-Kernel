@@ -1,11 +1,15 @@
 import pytest
 import torch
 
-from test.utils import supports_bfloat16
 from transformers.models.llama.configuration_llama import LlamaConfig
 from transformers.models.llama.modeling_llama import LlamaMLP
 from transformers.models.phi3.configuration_phi3 import Phi3Config
 from transformers.models.phi3.modeling_phi3 import Phi3MLP
+
+import os
+import sys
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.append(os.path.join(project_root, 'src'))
 
 from liger_kernel.ops.swiglu import LigerSiLUMulFunction
 from liger_kernel.transformers.functional import liger_swiglu
@@ -14,6 +18,14 @@ from liger_kernel.transformers.swiglu import LigerSwiGLUMLP
 from liger_kernel.utils import infer_device
 
 device = infer_device()
+
+def supports_bfloat16():
+    if device == "cuda":
+        return torch.cuda.get_device_capability() >= (8, 0)  # Ampere and newer
+    elif device == "xpu":
+        return True
+    else:
+        return False
 
 LLAMA_CONFIG = LlamaConfig(
     hidden_size=4096,
