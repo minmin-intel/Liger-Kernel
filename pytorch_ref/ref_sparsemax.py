@@ -1,4 +1,7 @@
-def torch_sparsemax(input_tensor: torch.Tensor, dim: int = -1) -> torch.Tensor:
+def torch_sparsemax(input_tensor: torch.Tensor, dim: int) -> torch.Tensor:
+    """
+    dim: -1 or 1
+    """
     input_dims = input_tensor.dim()
     if dim < 0:
         dim = input_dims + dim
