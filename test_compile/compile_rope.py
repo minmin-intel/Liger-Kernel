@@ -2,11 +2,11 @@ import torch
 from transformers.models.llama.configuration_llama import LlamaConfig
 from transformers.models.llama.modeling_llama import LlamaRotaryEmbedding
 
-import os
-import sys
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-sys.path.append(os.path.join(project_root, 'src'))
-from liger_kernel.ops.rope import rope_forward, rope_backward
+# import os
+# import sys
+# project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+# sys.path.append(os.path.join(project_root, 'src'))
+# from liger_kernel.ops.rope import rope_forward, rope_backward
 
 def transformers_version_dispatch(
     required_version: str,
